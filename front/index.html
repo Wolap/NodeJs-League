@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1> Listes des champions </h1>
+    <div id="champions"></div>
+
+    <h2>Soumission champions</h2>
+    <form onsubmit="event.preventDefault()">
+        <input type="text" name="nom" placeholder="Nom">
+        <input type="text" name="type" placeholder="Type">
+        <button onclick="createChampion()">Ajouter un champion</button>
+    </form>
+
+    <script>
+        // All champions
+        fetch('http://localhost:3000/champions')
+        .then((response) => response.json())
+        .then((data) => {
+            let championsDiv = document.querySelector('#champions')
+            data.forEach(champion => {
+                championsDiv.innerHTML += `
+                <a href="champion.html?id=${champion.id}"><h2>${champion.nom}</h2></a>
+                `
+            })
+        })
+
+        const createChampion = async () => {
+            const nomChampion = document.querySelector('input[name="nom"]').value
+            const typeChampion = document.querySelector('input[name="type"]').value
+
+            await fetch('http://localhost:3000/champions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nom: nomChampion,
+                    type: typeChampion
+                })
+            })
+
+            window.location.href = 'index.html'
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="index.html">Retour</a>
+    <div id="champion"></div>
+
+    <h3>Update Champion</h3>
+    <form onsubmit="event.preventDefault()">
+        <input type="text" name="nom" placeholder="Nom">
+        <input type="text" name="type" placeholder="Type">
+        <button onclick="updateChampion()">Update Champion</button>
+    </form>
+    <br>
+    <button onclick="deleteChampion()">Delete Champion</button>
+
+    <script>
+        let url = window.location.search
+        let id = new URLSearchParams(url).get('id')
+
+        // One champion
+        fetch(`http://localhost:3000/champions/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+            let championDiv = document.querySelector('#champion')
+            championDiv.innerHTML = `
+                <h2>${data.nom}</h2>
+                <p>${data.type}</p>
+            `
+        })
+
+        const updateChampion = async () => {
+            const nomChampion = document.querySelector('input[name="nom"]').value
+            const typeChampion = document.querySelector('input[name="type"]').value
+
+            await fetch(`http://localhost:3000/champions/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nom: nomChampion,
+                    type: typeChampion
+                })
+            })
+
+            window.location.href = 'index.html'
+        }
+
+        const deleteChampion = async () => {
+            await fetch(`http://localhost:3000/champions/${id}`, {
+                method: 'DELETE'
+            })
+
+            window.location.href = 'index.html'
+        }
+    </script>
+</body>
+</html>
